@@ -1,0 +1,6 @@
+*.json
+*.sublime-workspace
+*.sublime-project
+*.ipynb
+*.pyc
+Assets/keys.py
