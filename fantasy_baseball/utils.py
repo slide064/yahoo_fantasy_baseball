@@ -1,3 +1,4 @@
+# encoding: utf-8
 from lxml import etree
 
 def remove_namespaces_qname(doc, namespaces=None):
