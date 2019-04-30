@@ -4,3 +4,5 @@
 *.ipynb
 *.pyc
 Assets/keys.py
+Yahoo_Fantasy_Baseball.egg-info/
+*.code-workspace
