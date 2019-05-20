@@ -12,10 +12,3 @@ class League(object):
     @id.setter
     def id(self, id):
         self._id = id
-
-    
-
-if __name__ == '__main__':
-    league = League('8017')
-    print(league.id)
-    

@@ -1,5 +1,8 @@
-from auth import Auth
-from teams import Matchups
+# encoding: utf-8
+
+from .auth import Auth
+from .teams import Matchups
+import logging
 
 class Account(object):
 
@@ -7,7 +10,7 @@ class Account(object):
         self.client = auth_obj
         self.matchups = Matchups()
 
-    def get_matchups(self):
+    def matchup(self):
         """ 
         Returns json object of all matchups 
         """
@@ -15,7 +18,7 @@ class Account(object):
         self.matchups.update(r)
         print(self.matchups)
     
-    def get_teams(self):
+    def teams(self):
         """
         Returns json object of all the teams
         """
