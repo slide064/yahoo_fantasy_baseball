@@ -1,8 +1,5 @@
-import sys
-print(sys.version)
-from auth import Auth
-from account import Account
-import utils as utils
+from .auth import Auth
+from .account import Account
 
 def authenticate(username, secret):
     """ 

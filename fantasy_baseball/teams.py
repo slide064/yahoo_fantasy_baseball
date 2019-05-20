@@ -1,5 +1,6 @@
+from .utils import remove_namespaces_qname
 from lxml import etree
-import utils as utils
+import logging
 
 class Matchups(object):
 
@@ -8,10 +9,9 @@ class Matchups(object):
         self.matchups_xml = None
         self.matchups = None
 
-    
     def update(self, xml_content):
         root = etree.XML(xml_content.content)
-        self.content = utils.remove_namespaces_qname(root)
+        self.content = remove_namespaces_qname(root)
         self.matchups_xml = self.content[0].find(u'scoreboard').find('matchups').findall("matchup")
         matchups_array = []
         for match in self.matchups_xml:
@@ -39,4 +39,5 @@ class Matchup(object):
         self.team2 = Team(matchups[1])
 
     def __str__(self):
-        return self.team1.score + " " + self.team1.name + " --- " + self.team2.name + " " + self.team2.score
+        return "{} {} --- {} {}" \
+                .format(self.team1.score, self.team1.name, self.team2.name, self.team2.score)
