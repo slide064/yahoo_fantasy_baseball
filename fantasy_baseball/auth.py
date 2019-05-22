@@ -14,9 +14,10 @@ TOKEN_FILE_NAME = 'token_file.json'
 
 class Auth(object):
 
-    def __init__(self, username, secret):
+    def __init__(self, username, secret, token_file_name = TOKEN_FILE_NAME):
         self.token = None
         self.debug = True
+        self.token_file_name = token_file_name
         self.extra = {
             'client_id': username,
             'client_secret': secret
@@ -24,14 +25,15 @@ class Auth(object):
 
         # Load in the token
         try:
-            with open(TOKEN_FILE_NAME, "r") as read_file:
+            with open(self.token_file_name, "r") as read_file:
                 self.token = json.load(read_file)
-                logging.debug("Successfully read token")
-        except Exception as e:
+                logging.debug("Successfully read token")         
+        except:
+            logging.debug(f"Could not open {self.token_file_name}")
             try:
                 self._get_token(username, secret)
-            except Exception as e:
-                print("Cannot get token")
+            except:
+                logging.error("Could not get new token")
                 raise
 
         self.client = OAuth2Session(self.extra['client_id'], token=self.token,
@@ -39,28 +41,52 @@ class Auth(object):
                                     auto_refresh_kwargs=self.extra,
                                     token_updater=self._token_saver)
 
-        try:
-            r = self.client.get(TEST_URL)
-            logging.debug(r.status_code)
-        except Exception as e:
-            print("Cannot grab URL", e)
-            raise
+        logging.info(self.get_url(TEST_URL))
 
     def _get_token(self, username, secret):
-        webbrowser.open("{}?client_id={}&redirect_uri={}&response_type={}".format(TOKEN_URL, username, REDIRECT_URI, RESPONSE_TYPE))
-        token_input = input("Please enter the code given..")
-        token = OAuth2Session(username, redirect_uri = 'oob').fetch_token(REFRESH_URL, code = token_input, client_secret = secret)
-        self._token_saver(token)
+        token_location = f"{TOKEN_URL}?client_id={username}&redirect_uri={REDIRECT_URI}&response_type={RESPONSE_TYPE}"
+        try:
+            webbrowser.open(token_location)
+        except:
+            print(f"Please open {token_location} in your browser and enter code below")
+        token_input = ""
+        while len(token_input) != 7:
+            logging.debug(token_input)
+            try:
+                token_input = input("Please enter the code given..")
+            except:
+                print("Please enter something valid")
+        try:
+            logging.info("Grabbing token")
+            token = OAuth2Session(username, redirect_uri = 'oob').fetch_token(REFRESH_URL, code = token_input, client_secret = secret)
+            logging.info("Grabbed the token successfully")
+            self._token_saver(token)
+        except Exception as e:
+            logging.warning("Cannot write token")
+            logging.warning(e)
+            raise
+
         return token
 
     def get_url(self, url):
-        return self.client.get(url)
+        try:
+            r = self.client.get(url)
+            if r.status_code == 200:
+                f = r
+            else:
+                logging.warning(f'Cannot grab {url}, Status Code: {r.status_code}')
+                f = r.status_code
+        except Exception as e:
+            logging.warning(f'Cannot grab {url}')
+            logging.debug(e)
+            f = None
+        return f
 
     def _token_saver(self, token):
         try:
-            with open(TOKEN_FILE_NAME, "w") as write_file:
+            with open(self.token_file_name, "w") as write_file:
                 json.dump(token, write_file)
-                logging.debug("Wrote token to file")
-        except Exception as e:
-            logging.debug("Could not write token to file!")
+                logging.info(f"Wrote token to {self.token_file_name}")
+        except:
+            logging.error("Could not write token to file!")
             raise

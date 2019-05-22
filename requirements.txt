@@ -1,0 +1,3 @@
+lxml
+requests_oauthlib
+requets_mock
