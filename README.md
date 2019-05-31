@@ -17,14 +17,7 @@ The authentication process uses OAuth 2.0 with a refresh token. It will require 
 - You will then need to allow your account access to the API.
   - This is still under development, but during the account creation process it will ask you to visit a URL to authenticate.
 
-The most straightforward way to authenticate is with:
-
-```python
-    import fantasy_baseball
-    analytics = omniture.authenticate('my_username', 'my_secret')
-```
-
-However, to avoid hardcoding passwords, instead you can also put your username
+To avoid hardcoding passwords, you can also put your username
 and password in unix environment variables (e.g. in your `.bashrc`):
 
 ```bash
