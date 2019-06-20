@@ -1,5 +1,5 @@
 from lxml import etree
-import utils as utils
+from .utils import remove_namespaces_qname
 
 class Matchups(object):
 
@@ -10,7 +10,7 @@ class Matchups(object):
     
     def update(self, xml_content):
         root = etree.XML(xml_content.content)
-        self.content = utils.remove_namespaces_qname(root)
+        self.content = remove_namespaces_qname(root)
         self.matchups_xml = self.content[0].find(u'scoreboard').find('matchups').findall("matchup")
         matchups_array = []
         for match in self.matchups_xml:
