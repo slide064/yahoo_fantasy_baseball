@@ -1,11 +1,14 @@
 from lxml import etree
-from .utils import get_item, get_items
 import sys
+
+def parseRequest(dict_key: dict, request):
+    cont = etree.XML(request.content)
+    return parseXML(dict_key, cont)
 
 def parseXML(dict_key : dict, xml: etree._Element) -> dict:
     """
-    Reads the XML and returns a dict with
-    in the same format.
+    Reads the XML and returns a dict in the same structure as the 
+    dict_key.
     """
     passDict : dict = {}
     for key, value in dict_key.items():
@@ -27,3 +30,16 @@ def parseXML(dict_key : dict, xml: etree._Element) -> dict:
                 #    parseXML(key, items)
             passDict.update({key_name[0] : current_dict})
     return passDict
+
+def get_item(name : str, xml : etree._Element):
+    return xml.find(f'.//NS:{name}',namespace(xml))
+
+def get_items(name : str, xml : etree._Element):
+    return xml.findall(f'.//NS:{name}',namespace(xml))
+
+def namespace(xml : etree._Element) -> dict:
+    """
+    Removes the namespaces and returns only
+    namespaces that are valid
+    """
+    return {"NS":y for x,y in xml.nsmap.items() if not x}
