@@ -15,12 +15,13 @@ class Reports(Enum):
     ALL_LEAGUES = "all_leagues"
     STANDINGS = "standings"
     SETTINGS = "settings"
+    SCOREBOARD = "scoreboard"
 
 def get_url(get_function: Any):
     with open(JSON_PATH,'r') as openfile:
         json_config = json.load(openfile)
-    def get_json(report_type: Reports, **kwargs):
+    def get_json(report_type: Reports,filters = '', **kwargs):
         rp = json_config.get(report_type.value)
-        content_dict = utils_xml.parseRequest(rp.get("json_key"), get_function(rp.get("URL").format(**kwargs)))
+        content_dict = utils_xml.parseRequest(rp.get("json_key"), get_function(rp.get("URL").format(**kwargs)+ filters))
         return content_dict
     return get_json

@@ -1,4 +1,5 @@
 from lxml import etree
+import logging
 import sys
 
 def parseRequest(dict_key: dict, request):
@@ -14,7 +15,8 @@ def parseXML(dict_key : dict, xml: etree._Element) -> dict:
     for key, value in dict_key.items():
         if '/' not in key:
             if not isinstance(value, dict):
-                passDict.update({key : get_item(key, xml).text})
+                mappedValues = getTextValue(get_item)(key.split("|"), xml)
+                passDict.update(next(mappedValues))
             else:
                 passDict.update({ key : parseXML(value, get_item(key, xml) ) })
         else:
@@ -30,6 +32,18 @@ def parseXML(dict_key : dict, xml: etree._Element) -> dict:
                 #    parseXML(key, items)
             passDict.update({key_name[0] : current_dict})
     return passDict
+
+def getTextValue(f):
+    def returnKeyValue(keys, xml):
+        def returnValidText(key):
+            a = None
+            try:
+                a = f(key,xml).text
+            except:
+                logging.warning(f'{key} not found in list')
+            return a
+        return ({key:returnValidText(key)} for key in keys if returnValidText(key))
+    return returnKeyValue
 
 def get_item(name : str, xml : etree._Element):
     return xml.find(f'.//NS:{name}',namespace(xml))
