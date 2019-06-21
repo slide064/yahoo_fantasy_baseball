@@ -1,16 +1,9 @@
 from typing import Generator, Set
 import logging
-from fantasy_baseball.utils import singleton
-
-class League(object):
-    def __init__(self, team: dict):
-        self._key = team.get('team_key')
-        self._id = team.get('team_id')
-        self._name = team.get('name')
 
 class Leagues(object):
-    def __init__(self, league_dict):
-        self.leagues = league_dict.get('league')
+    def __init__(self, leagues_dict):
+        self.leagues = leagues_dict.get('league')
 
     def get_league_names(self) -> Generator:
         return (x.get('name') for y, x in self.leagues.items())
