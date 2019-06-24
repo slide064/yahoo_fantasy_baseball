@@ -2,6 +2,7 @@ import unittest
 import logging
 import requests_mock
 import os
+import json
 import fantasy_baseball
 import fantasy_baseball.get_url as get_url
 import fantasy_baseball.utils
@@ -18,7 +19,8 @@ class TestLeagues(unittest.TestCase):
         leagues = self.account.getLeagues()
         league = leagues.get_league(list(leagues.get_league_ids())[0])
         scoreboard = league.get_scoreboard()
-        thescoreboard = scoreboard.get_scoreboard()
+        thescoreboard = scoreboard.get_json()
+        print(json.dumps(thescoreboard,indent=3))
         pass
 
 

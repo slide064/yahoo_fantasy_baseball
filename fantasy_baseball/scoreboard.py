@@ -7,6 +7,6 @@ class Scoreboard:
         self.league_id = league_id
         self.weeks : dict = {}
 
-    def get_scoreboard(self):
+    def get_json(self):
         return self.api(Reports.SCOREBOARD,**{"LEAGUE":self.league_id})
     
