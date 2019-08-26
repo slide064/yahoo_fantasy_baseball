@@ -1,22 +1,23 @@
-from auth import Auth
-from teams import Matchups
+# encoding: utf-8
+
+from .auth import Auth
+from .leagues import Leagues
+import logging
+import fantasy_baseball.get_url as get_url
 
 class Account(object):
 
     def __init__(self,auth_obj):
         self.client = auth_obj
-        self.matchups = Matchups()
+        self.leagues : Leagues = None
+        self._get_json = get_url.get_url(self.__getURL)
 
-    def get_matchups(self):
-        """ 
-        Returns json object of all matchups 
-        """
-        r = self.client.get_url('https://fantasysports.yahooapis.com/fantasy/v2/league/mlb.l.8017/scoreboard')
-        self.matchups.update(r)
-        print(self.matchups)
+    def getLeagues(self):
+        if self.leagues:
+            return Leagues
+        else:
+            self.leagues = Leagues(self._get_json)
+            return self.leagues
     
-    def get_teams(self):
-        """
-        Returns json object of all the teams
-        """
-        return 0
+    def __getURL(self, URL):
+        return self.client.get_url(URL)
